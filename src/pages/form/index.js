@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import {
     Wrapper,
     FormWrapper,
-    FormHeader,
     Section,
     Input,
     SectionTitle,
@@ -21,10 +20,13 @@ import {
     Divisor
 } from './styles';
 
+import Modal from '../../components/modal';
+import MainHeader from '../../components/header';
+
 const Form = () => {
 
     const [pregoeiro, setPregoeiro] = useState('');
-    const [endereo, setEndereco] = useState('');
+    const [endereco, setEndereco] = useState('');
     const [numPregao, setNumPregao] = useState('');
     const [numProcesso, setNumProcesso] = useState('');
     const [dataLicitacao, setDataLicitacao] = useState('');
@@ -33,18 +35,22 @@ const Form = () => {
     const [numItem, setNumItem] = useState('');
     const [marca, setMarca] = useState('');
     const [unidade, setUnidade] = useState('');
-    const [qtdTotal, setQtdTotal] = useState('');
-    const [valorUni, setValorUni] = useState('');
-    const [valorTotal, setValorTotal] = useState('');
     const [prazo, setPrazo] = useState('');
     const [garantia, setGarantia] = useState('');
     const [validade, setValidade] = useState('');
     const [dataLocal, setDataLocal] = useState('');
+    const [qtdTotal, setQtdTotal] = useState(0);
+    const [valorUni, setValorUni] = useState(0);
+    const [valorTotal, setValorTotal] = useState(0);
 
-    const [items, setItems] = useState([
-        // { numItem: '01', desc: 'some desc', marca: 'nokia', unidade: 'asxasx', qtdTotal: 231, valorUni: 1877251, valorTotal: 985934 },
-        // { numItem: '01', desc: 'some desc', marca: 'nokia', unidade: 'asxasx', qtdTotal: 231, valorUni: 1877251, valorTotal: 985934 }
-    ]);
+    useEffect(() => {
+        setValorTotal(qtdTotal * valorUni);
+    }, [qtdTotal, valorUni])
+
+    const [items, setItems] = useState([]);
+
+    const [showModal, setShowModal] = useState(false);
+    const [PDFLink, setPDFLink] = useState('');
 
     const handleAddItem = () => {
         const item = { numItem, desc, marca, unidade, qtdTotal, valorUni, valorTotal }
@@ -80,69 +86,127 @@ const Form = () => {
     const toMoneyFormat = (amount) => moneyFormatter.format(amount);
 
     const handleSubmit = async () => {
+        if (isAbleToSubmit()) {
+            let newItems = items.map(item => {
+                const {
+                    numItem,
+                    desc,
+                    marca,
+                    unidade,
+                    qtdTotal,
+                    valorUni,
+                    valorTotal,
+                } = item;
 
-        let newItems = items.map(item => {
-            const {
-                numItem,
-                desc,
-                marca,
-                unidade,
-                qtdTotal,
-                valorUni,
-                valorTotal,
-            } = item;
+                const valUnitario = valorUni;
+                const valTotal = valorTotal;
 
-            const valUnitario = toMoneyFormat(valorUni);
-            const valTotal = toMoneyFormat(valorTotal);
+                return { numItem, desc, marca, unidade, qtdTotal, valUnitario, valTotal }
+            })
 
-            return { numItem, desc, marca, unidade, qtdTotal, valUnitario, valTotal }
-        })
+            const reducer = (total, currentValue) => total + Number(currentValue.valorTotal);
+            const totalFinal = items.reduce(reducer, 0);
 
-        const reducer = (total, currentValue) => total + Number(currentValue.valorTotal);
-        const totalFinal = toMoneyFormat(items.reduce(reducer, 0));
+            const data = {
+                pregoeiro,
+                endereco,
+                numPregao,
+                numProcesso,
+                dataLicitacao,
+                dataProposta,
+                prazo,
+                garantia,
+                validade,
+                dataLocal,
+                totalFinal,
+                items: newItems,
+            }
 
-        const data = {
-            pregoeiro,
-            endereo,
-            numPregao,
-            numProcesso,
-            dataLicitacao,
-            dataProposta,
-            prazo,
-            garantia,
-            validade,
-            dataLocal,
-            totalFinal,
-            items: newItems,
+            const response = await axios.post('http://localhost:4000', data);
+            setPDFLink(`http://localhost:4000/pdf/${response.data.id}`);
+            setShowModal(true);
+        }
+        else {
+            return alert('Campos obrigatórios não preenchidos');
         }
 
-        await axios.post('URL DA APPI AQUI', data);
+    }
+
+    const hideModal = () => {
+        setShowModal(false);
+        setPDFLink('');
+
+        setPregoeiro('');
+        setEndereco('');
+        setNumPregao('');
+        setNumProcesso('');
+        setDataLicitacao('');
+        setDataProposta('');
+        setDesc('');
+        setNumItem('');
+        setMarca('');
+        setUnidade('');
+        setQtdTotal('');
+        setValorUni('');
+        setValorTotal('');
+        setPrazo('');
+        setGarantia('');
+        setValidade('');
+        setDataLocal('');
+        setItems([]);
+    }
+
+    const isAbleToSubmit = () => {
+        if (
+            pregoeiro === '' ||
+            endereco === '' ||
+            numPregao === '' ||
+            numProcesso === '' ||
+            dataLicitacao === '' ||
+            dataProposta === '' ||
+            desc === '' ||
+            numItem === '' ||
+            marca === '' ||
+            unidade === '' ||
+            qtdTotal === '' ||
+            valorUni === '' ||
+            valorTotal === '' ||
+            prazo === '' ||
+            garantia === '' ||
+            validade === '' ||
+            dataLocal === '' ||
+            items === []
+        ) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     return (
         <React.Fragment>
             <Wrapper>
+                <Modal handleClick={hideModal} show={showModal} PDFLink={PDFLink} />
                 <FormWrapper>
-                    <FormHeader>
-                        <h1>Gerar Proposta de Valor</h1>
-                    </FormHeader>
+                    <MainHeader title='Gerar Documento' linkLabel='Ver Documentos' target='/documents' />
                     <SectionTitle>Pregoeiro e Pregão</SectionTitle>
                     <Section>
                         <InputWrapper>
                             <Label>Pregoeiro</Label>
-                            <Input onChange={(e) => setPregoeiro(e.target.value)} />
+                            <Input value={pregoeiro} onChange={(e) => setPregoeiro(e.target.value)} />
                         </InputWrapper>
                         <InputWrapper>
                             <Label>Endereço</Label>
-                            <Input onChange={(e) => setEndereco(e.target.value)} />
+                            <Input value={endereco} onChange={(e) => setEndereco(e.target.value)} />
                         </InputWrapper>
                         <InputWrapper>
                             <Label>Número do Pregão</Label>
-                            <Input onChange={(e) => setNumPregao(e.target.value)} />
+                            <Input value={numPregao} onChange={(e) => setNumPregao(e.target.value)} />
                         </InputWrapper>
                         <InputWrapper>
                             <Label>Número do Processo</Label>
-                            <Input onChange={(e) => setNumProcesso(e.target.value)} />
+                            <Input value={numProcesso} onChange={(e) => setNumProcesso(e.target.value)} />
                         </InputWrapper>
                         <Jump />
                     </Section>
@@ -150,11 +214,11 @@ const Form = () => {
                     <Section>
                         <InputWrapper>
                             <Label>Data da Licitação</Label>
-                            <Input onChange={(e) => setDataLicitacao(e.target.value)} />
+                            <Input value={dataLicitacao} onChange={(e) => setDataLicitacao(e.target.value)} />
                         </InputWrapper>
                         <InputWrapper>
                             <Label>Data da Proposta</Label>
-                            <Input onChange={(e) => setDataProposta(e.target.value)} />
+                            <Input value={dataProposta} onChange={(e) => setDataProposta(e.target.value)} />
                         </InputWrapper>
                     </Section>
                     <SectionTitle>Informações do Rodapé</SectionTitle>
@@ -197,15 +261,23 @@ const Form = () => {
                             </InputWrapper>
                             <InputWrapper>
                                 <Label>Quantidade Total</Label>
-                                <Input type='number' value={qtdTotal} onChange={(e) => setQtdTotal(e.target.value)} />
+                                <Input type='number' value={qtdTotal}
+                                    onChange={(e) => {
+                                        setQtdTotal(e.target.value);
+                                    }}
+                                />
                             </InputWrapper>
                             <InputWrapper>
                                 <Label>Valor Unitário</Label>
-                                <Input type='number' value={valorUni} onChange={(e) => setValorUni(e.target.value)} />
+                                <Input type='number' value={valorUni}
+                                    onChange={(e) => {
+                                        setValorUni(e.target.value);
+                                    }}
+                                />
                             </InputWrapper>
                             <InputWrapper>
                                 <Label>Valor Total</Label>
-                                <Input type='number' value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} />
+                                <Input disabled={true} type='number' value={valorTotal} />
                             </InputWrapper>
                             <Button type='button' onClick={handleAddItem}>
                                 ADICIONAR ITEM

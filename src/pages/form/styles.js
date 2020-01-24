@@ -6,29 +6,13 @@ export const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
 `;
 
 export const FormWrapper = styled.div`
     width: 100%;
     height: 100%;
     background: transparent;
-`;
-
-export const FormHeader = styled.header`
-    width: 100%;
-    padding: 4px 32px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.13);
-    grid-column: span 4;
-    grid-row: span 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #00b0ff;
-
-    & > h1{
-        font-size: 20px;
-        color: #fff;
-    }
 `;
 
 export const Section = styled.form`
