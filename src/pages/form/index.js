@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { toMoneyFormat } from '../../util/stringsHandler';
+import MoneyFormatInput from '../../components/currencyInput';
 import {
     Wrapper,
     FormWrapper,
@@ -17,11 +18,13 @@ import {
     Row,
     Cell,
     HeaderCell,
-    Divisor
+    Divisor,
+    DeleteItem
 } from './styles';
 
 import Modal from '../../components/modal';
 import MainHeader from '../../components/header';
+import DeleteIcon from '../../assets/delete.svg';
 
 const Form = () => {
 
@@ -39,12 +42,13 @@ const Form = () => {
     const [garantia, setGarantia] = useState('');
     const [validade, setValidade] = useState('');
     const [dataLocal, setDataLocal] = useState('');
-    const [qtdTotal, setQtdTotal] = useState(0);
-    const [valorUni, setValorUni] = useState(0);
+    const [qtdTotal, setQtdTotal] = useState(1);
+    const [valorUni, setValorUni] = useState('0');
     const [valorTotal, setValorTotal] = useState(0);
 
     useEffect(() => {
-        setValorTotal(qtdTotal * valorUni);
+        const valorUnitarioConvertido = Number(valorUni.replace(/,/g, ''));
+        setValorTotal(qtdTotal * valorUnitarioConvertido);
     }, [qtdTotal, valorUni])
 
     const [items, setItems] = useState([]);
@@ -53,7 +57,18 @@ const Form = () => {
     const [PDFLink, setPDFLink] = useState('');
 
     const handleAddItem = () => {
-        const item = { numItem, desc, marca, unidade, qtdTotal, valorUni, valorTotal }
+
+        const valorUnitarioConvertido = Number(valorUni.replace(/,/g, '')).toFixed(2);
+        const valorTot = valorTotal.toFixed(2);
+
+        const item = {
+            numItem,
+            desc, marca,
+            unidade,
+            qtdTotal,
+            valorUnitarioConvertido,
+            valorTot
+        }
 
         if (
             item.numItem === ''
@@ -78,12 +93,10 @@ const Form = () => {
         setValorTotal('');
     }
 
-    const moneyFormatter = new Intl.NumberFormat('pt-br', {
-        style: 'currency',
-        currency: 'BRL',
-    });
-
-    const toMoneyFormat = (amount) => moneyFormatter.format(amount);
+    const handleRemoveItem = (removeIndex) => {
+        const filteredItemsList = items.filter((item, index) => index !== removeIndex);
+        setItems(filteredItemsList)
+    }
 
     const handleSubmit = async () => {
         if (isAbleToSubmit()) {
@@ -94,12 +107,12 @@ const Form = () => {
                     marca,
                     unidade,
                     qtdTotal,
-                    valorUni,
-                    valorTotal,
+                    valorUnitarioConvertido,
+                    valorTot,
                 } = item;
 
-                const valUnitario = valorUni;
-                const valTotal = valorTotal;
+                const valUnitario = Number(valorUnitarioConvertido);
+                const valTotal = valorTot;
 
                 return { numItem, desc, marca, unidade, qtdTotal, valUnitario, valTotal }
             })
@@ -122,9 +135,11 @@ const Form = () => {
                 items: newItems,
             }
 
-            const response = await axios.post('http://localhost:4000', data);
-            setPDFLink(`http://localhost:4000/pdf/${response.data.id}`);
-            setShowModal(true);
+            console.log(data);
+
+            // const response = await axios.post('http://localhost:4000', data);
+            // setPDFLink(`http://localhost:4000/pdf/${response.data.id}`);
+            // setShowModal(true);
         }
         else {
             return alert('Campos obrigatórios não preenchidos');
@@ -164,13 +179,6 @@ const Form = () => {
             numProcesso === '' ||
             dataLicitacao === '' ||
             dataProposta === '' ||
-            desc === '' ||
-            numItem === '' ||
-            marca === '' ||
-            unidade === '' ||
-            qtdTotal === '' ||
-            valorUni === '' ||
-            valorTotal === '' ||
             prazo === '' ||
             garantia === '' ||
             validade === '' ||
@@ -214,11 +222,11 @@ const Form = () => {
                     <Section>
                         <InputWrapper>
                             <Label>Data da Licitação</Label>
-                            <Input value={dataLicitacao} onChange={(e) => setDataLicitacao(e.target.value)} />
+                            <Input type='date' value={dataLicitacao} onChange={(e) => setDataLicitacao(e.target.value)} />
                         </InputWrapper>
                         <InputWrapper>
                             <Label>Data da Proposta</Label>
-                            <Input value={dataProposta} onChange={(e) => setDataProposta(e.target.value)} />
+                            <Input type='date' value={dataProposta} onChange={(e) => setDataProposta(e.target.value)} />
                         </InputWrapper>
                     </Section>
                     <SectionTitle>Informações do Rodapé</SectionTitle>
@@ -236,7 +244,7 @@ const Form = () => {
                             <Input value={validade} onChange={(e) => setValidade(e.target.value)} />
                         </InputWrapper>
                         <InputWrapper>
-                            <Label>Data e Local Atual</Label>
+                            <Label>Local e Data Atuais</Label>
                             <Input value={dataLocal} onChange={(e) => setDataLocal(e.target.value)} />
                         </InputWrapper>
                     </Section>
@@ -261,7 +269,10 @@ const Form = () => {
                             </InputWrapper>
                             <InputWrapper>
                                 <Label>Quantidade Total</Label>
-                                <Input type='number' value={qtdTotal}
+                                <Input
+                                    min={0}
+                                    type='number'
+                                    value={qtdTotal}
                                     onChange={(e) => {
                                         setQtdTotal(e.target.value);
                                     }}
@@ -269,27 +280,26 @@ const Form = () => {
                             </InputWrapper>
                             <InputWrapper>
                                 <Label>Valor Unitário</Label>
-                                <Input type='number' value={valorUni}
-                                    onChange={(e) => {
-                                        setValorUni(e.target.value);
-                                    }}
+                                <MoneyFormatInput
+                                    val={valorUni}
+                                    handleChange={(e) => setValorUni(e)}
                                 />
                             </InputWrapper>
                             <InputWrapper>
                                 <Label>Valor Total</Label>
-                                <Input disabled={true} type='number' value={valorTotal} />
+                                <Input
+                                    disabled={true}
+                                    type='string'
+                                    value={toMoneyFormat(valorTotal)}
+                                />
                             </InputWrapper>
                             <Button type='button' onClick={handleAddItem}>
-                                ADICIONAR ITEM
+                                Adidionar Item
                             </Button>
                         </SubGrid>
-                    </Section>
-                    <Section style={{ display: items.length ? 'block' : 'none' }}>
-                        <SectionTitle style={{ display: items.length ? 'block' : 'none' }}>
-                            Items Cadastrados
-                        </SectionTitle>
-                        <Table>
+                        <Table style={{ display: items.length ? 'block' : 'none' }}>
                             <Row>
+                                <HeaderCell>Remover</HeaderCell>
                                 <HeaderCell>Item</HeaderCell>
                                 <HeaderCell>DESCRIÇÃO</HeaderCell>
                                 <HeaderCell>MARCA</HeaderCell>
@@ -301,22 +311,38 @@ const Form = () => {
                             {
                                 items.map((item, index) => {
                                     return <Row key={index}>
+                                        <Cell>
+                                            <DeleteItem
+                                                onClick={() => handleRemoveItem(index)}
+                                                src={DeleteIcon}
+                                            >
+
+                                            </DeleteItem>
+                                        </Cell>
                                         <Cell>{item.numItem}</Cell>
                                         <Cell>{item.desc}</Cell>
                                         <Cell>{item.marca}</Cell>
                                         <Cell>{item.unidade}</Cell>
                                         <Cell>{item.qtdTotal}</Cell>
-                                        <Cell>{toMoneyFormat(item.valorUni)}</Cell>
-                                        <Cell>{toMoneyFormat(item.valorTotal)}</Cell>
+                                        <Cell>{toMoneyFormat(item.valorUnitarioConvertido)}</Cell>
+                                        <Cell>{toMoneyFormat(item.valorTot)}</Cell>
                                     </Row>
                                 })
                             }
                         </Table>
                     </Section>
-                    <Section>
-                        <Divisor />
-                        <Button onClick={handleSubmit} type='button' s={4}>GERAR DOCUMENTO</Button>
-                    </Section>
+                    <Divisor style={{ margin: '0 16px' }} />
+                    <Button
+                        onClick={handleSubmit}
+                        type='button'
+                        style={{
+                            display: items.length ? 'block' : 'none',
+                            margin: '16px 0 16px 16px',
+                            width: '31%'
+                        }}
+                    >
+                        Gerar Documento
+                    </Button>
                 </FormWrapper>
             </Wrapper>
         </React.Fragment >

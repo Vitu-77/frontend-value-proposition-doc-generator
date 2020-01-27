@@ -12,7 +12,7 @@ export const GlobalStyle = createGlobalStyle`
     body{
         margin: 0;
         padding: 0;
-        background: #fff;
+        background: #f6f8fa;
         overflow: hidden;
     }
 `;

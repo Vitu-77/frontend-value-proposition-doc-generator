@@ -1,0 +1,34 @@
+.container {
+    position: relative;
+}
+
+.container span {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    color: #3f464d;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+.currency-input {
+    z-index: 100;
+    border-radius: 4px;
+    padding: 12px 8px 12px 35px;
+    border: 1px solid #ccc;
+    outline: none;
+    color: #3f464d;
+    font-size: 16px;
+    width: 100%;
+    background: #fff;
+    font-weight: 400;
+    position: relative;
+}
+
+
+.currency-input:focus{
+    border-color: #0366d6;
+    box-shadow: 0px 0px 0px 1px #0366d6;
+}
