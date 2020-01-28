@@ -72,7 +72,6 @@ export const Input = styled.input`
     background: #fff;
     font-weight: 400;
     transition: 300ms;
-    
 
     &::placeholder{
         color: #24292e;

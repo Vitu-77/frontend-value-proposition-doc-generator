@@ -45,16 +45,13 @@ const DocsList = () => {
                                 {docs?.map((doc) => {
                                     return (
                                         <Row key={doc.id}>
-                                            <a
-                                                href={`LINK DA API AQUI/pdf/${doc.id}`} 
-                                                target='_blank'
-                                            >
+                                            <Link to={`/documents/${doc.id}`}>
                                                 <Cell>{doc.num_processo}</Cell>
                                                 <Cell>{doc.pregoeiro}</Cell>
                                                 <Cell>{doc.num_pregao}</Cell>
                                                 <Cell>{doc.data_licitacao}</Cell>
                                                 <Cell>{doc.data_proposta}</Cell>
-                                            </a>
+                                            </Link>
                                         </Row>
                                     )
                                 })}

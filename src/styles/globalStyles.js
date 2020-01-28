@@ -13,6 +13,6 @@ export const GlobalStyle = createGlobalStyle`
         margin: 0;
         padding: 0;
         background: #f6f8fa;
-        overflow: hidden;
+        overflow-x: hidden;
     }
 `;

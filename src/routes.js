@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import Form from './pages/form';
 import DocsList from './pages/docsList';
+import Document from './pages/document';
 
 const Routes = () => {
     return(
@@ -13,6 +14,9 @@ const Routes = () => {
                 </Route>
                 <Route exact path='/documents'>
                     <DocsList />
+                </Route>
+                <Route exact path='/documents/:document_id'>
+                    <Document />
                 </Route>
             </Switch>
         </Router>

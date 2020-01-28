@@ -15,7 +15,7 @@ export const List = styled.div`
     flex-direction: column;
     width: 100%;
     border: 1px solid #37474f;
-    border-radius: 6px;
+    border-radius: 5px;
 `;
 
 export const Row = styled.div`
@@ -67,14 +67,14 @@ export const HeaderCell = styled.div`
     flex: 1;
     font-size: 16px;
     color: #fff;
-    background: #37474f;
+    background: #24292e;
     padding: 16px 8px;
     word-break: break-word;
     margin: 0;
     text-align: center;
 
-    &:first-child{ border-radius: 4px 0 0 0 }
-    &:last-child{ border-radius: 0 4px 0 0 }
+    &:first-child{ border-radius: 3px 0 0 0 }
+    &:last-child{ border-radius: 0 3px 0 0 }
 `;
 
 const LoadingAnimation = keyframes`
