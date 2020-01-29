@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+import { BASE_URL } from '../../config';
+
 import MainHeader from '../../components/header';
 
 import {
@@ -19,7 +21,7 @@ const DocsList = () => {
 
     useEffect(() => {
         const fetch = async () => {
-            const { data } = await axios.get('http://localhost:4000');
+            const { data } = await axios.get(BASE_URL);
             setDocs(data.result);
         }
 
@@ -32,7 +34,7 @@ const DocsList = () => {
                 docs
                     ?
                     <Wrapper>
-                        <MainHeader title='Documentos' linkLabel='Novo Documento' target='/create' />
+                        <MainHeader title='Documentos' linkLabel='Novo Documento' target='/' />
                         <ListContainer>
                             <List>
                                 <Row>

@@ -8,9 +8,7 @@ const Modal = ({ handleClick, show, PDFLink }) => {
             <ModalContainer>
                 <h1>Documento gerado!</h1>
                 <CloseModal onClick={handleClick} />
-                <Link href={PDFLink} target='_blank'>
-                    <Download>Baixar</Download>
-                </Link>
+                <Link href={PDFLink} target='_blank'>Baixar</Link>
             </ModalContainer>
         </Wrapper>
     );

@@ -7,7 +7,11 @@ const MoneyFormatInput = ({ val, handleChange }) => {
     return (
         <div className='container'>
             <span>R$</span>
-            <CurrencyInput className='currency-input' value={val} onChange={handleChange} />
+            <CurrencyInput
+                className='currency-input'
+                value={val}
+                onChange={handleChange}
+            />
         </div>
     )
 }

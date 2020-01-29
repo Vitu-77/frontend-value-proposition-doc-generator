@@ -7,14 +7,14 @@ export const Wrapper = styled.div`
 `;
 
 export const ListContainer = styled.div`
-    padding: 32px;
+    margin-top: 16px;
+    padding: 16px;
 `;
 
 export const List = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    border: 1px solid #37474f;
     border-radius: 5px;
 `;
 
@@ -33,7 +33,7 @@ export const Row = styled.div`
     }
 
     &:hover{
-        background: #adb3b9;
+        background: #cccccc;
     }
 
     & > a {
@@ -52,26 +52,38 @@ export const Row = styled.div`
 `;
 
 export const Cell = styled.div`
-    font-size: 16px;
+    font-size: 13px;
+    text-transform: uppercase;
     color: #37474f;
-    padding: 16px 8px;
+    padding: 8px;
     word-break: break-word;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     margin: 0;
     text-align: center;
     flex: 1;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+
+    &:last-child{
+        border-right: 1px solid #ccc;
+    }
 `;
 
 export const HeaderCell = styled.div`
     flex: 1;
-    font-size: 16px;
+    font-size: 13px;
+    text-transform: uppercase;
     color: #fff;
-    background: #24292e;
-    padding: 16px 8px;
+    background: #0366d6;
+    padding: 8px;
     word-break: break-word;
+    font-weight: 600;
     margin: 0;
     text-align: center;
+    border: 1px solid #0366d6;
+    opacity: .8;
 
     &:first-child{ border-radius: 3px 0 0 0 }
     &:last-child{ border-radius: 0 3px 0 0 }

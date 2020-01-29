@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toMoneyFormat } from '../../util/stringsHandler';
 import MoneyFormatInput from '../../components/currencyInput';
+
+import { BASE_URL } from '../../config';
+
 import {
     Wrapper,
     FormWrapper,
@@ -14,16 +17,27 @@ import {
     Label,
     InputWrapper,
     Button,
-    Table,
-    Row,
-    Cell,
-    HeaderCell,
-    Divisor,
-    DeleteItem
+    SecondaryButton,
+    // Table,
+    // Row,
+    // Cell,
+    // HeaderCell,
+    // Divisor,
+    // DeleteItem,
+
+    StyledGrid,
+    StyledItem,
+    Value,
+    DescItem,
+    ItemKeyWrapper,
+    ItemLabel,
+    ItemHeader,
+    ItemAction
 } from './styles';
 
 import Modal from '../../components/modal';
 import MainHeader from '../../components/header';
+
 import DeleteIcon from '../../assets/delete.svg';
 
 const Form = () => {
@@ -117,7 +131,7 @@ const Form = () => {
                 return { numItem, desc, marca, unidade, qtdTotal, valUnitario, valTotal }
             })
 
-            const reducer = (total, currentValue) => total + Number(currentValue.valorTotal);
+            const reducer = (total, currentValue) => total + Number(currentValue.valorTot);
             const totalFinal = items.reduce(reducer, 0);
 
             const data = {
@@ -137,14 +151,13 @@ const Form = () => {
 
             console.log(data);
 
-            // const response = await axios.post('http://localhost:4000', data);
-            // setPDFLink(`http://localhost:4000/pdf/${response.data.id}`);
-            // setShowModal(true);
+            const response = await axios.post(BASE_URL, data);
+            setPDFLink(`http://localhost:4000/pdf/${response.data.id}`);
+            setShowModal(true);
         }
         else {
             return alert('Campos obrigatórios não preenchidos');
         }
-
     }
 
     const hideModal = () => {
@@ -293,11 +306,11 @@ const Form = () => {
                                     value={toMoneyFormat(valorTotal)}
                                 />
                             </InputWrapper>
-                            <Button type='button' onClick={handleAddItem}>
-                                Adidionar Item
-                            </Button>
+                            <SecondaryButton type='button' onClick={handleAddItem}>
+                                Adicionar Item
+                            </SecondaryButton>
                         </SubGrid>
-                        <Table style={{ display: items.length ? 'block' : 'none' }}>
+                        {/* <Table style={{ display: items.length ? 'block' : 'none' }}>
                             <Row>
                                 <HeaderCell>Remover</HeaderCell>
                                 <HeaderCell>Item</HeaderCell>
@@ -329,16 +342,56 @@ const Form = () => {
                                     </Row>
                                 })
                             }
-                        </Table>
+                        </Table> */}
+                        <StyledGrid>
+                            {
+                                items.map((item, index) => (
+                                    <StyledItem key={index}>
+                                        <ItemHeader>
+                                            <ItemAction onClick={() => handleRemoveItem(index)}>
+                                                <img src={DeleteIcon} />
+                                            </ItemAction>
+                                        </ItemHeader>
+                                        <ItemKeyWrapper>
+                                            <ItemLabel>Item</ItemLabel>
+                                            <Value>{item.numItem}</Value>
+                                        </ItemKeyWrapper>
+                                        <ItemKeyWrapper>
+                                            <ItemLabel>Marca</ItemLabel>
+                                            <Value>{item.marca}</Value>
+                                        </ItemKeyWrapper>
+                                        <ItemKeyWrapper>
+                                            <ItemLabel>Unidade</ItemLabel>
+                                            <Value>{item.unidade}</Value>
+                                        </ItemKeyWrapper>
+                                        <ItemKeyWrapper>
+                                            <ItemLabel>Quantidade</ItemLabel>
+                                            <Value>{item.qtdTotal}</Value>
+                                        </ItemKeyWrapper>
+                                        <ItemKeyWrapper>
+                                            <ItemLabel>Valor Unitário</ItemLabel>
+                                            <Value>{toMoneyFormat(item.valorUnitarioConvertido)}</Value>
+                                        </ItemKeyWrapper>
+                                        <ItemKeyWrapper>
+                                            <ItemLabel>Valor Total</ItemLabel>
+                                            <Value>{toMoneyFormat(item.valorTot)}</Value>
+                                        </ItemKeyWrapper>
+                                        <ItemKeyWrapper c={3}>
+                                            <ItemLabel>Descrição</ItemLabel>
+                                            <DescItem>{item.desc}</DescItem>
+                                        </ItemKeyWrapper>
+                                    </StyledItem>
+                                ))
+                            }
+                        </StyledGrid>
                     </Section>
-                    <Divisor style={{ margin: '0 16px' }} />
                     <Button
                         onClick={handleSubmit}
                         type='button'
                         style={{
                             display: items.length ? 'block' : 'none',
                             margin: '16px 0 16px 16px',
-                            width: '31%'
+                            width: '97.8%'
                         }}
                     >
                         Gerar Documento

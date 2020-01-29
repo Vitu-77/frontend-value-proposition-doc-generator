@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
 
 export const ModalContainer = styled.div`
     position: relative;
-    padding: 32px;
+    padding: 30px 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,15 +28,15 @@ export const ModalContainer = styled.div`
     border-radius: 4px;
 
     & > h1{
-        font-size: 24px;
+        font-size: 22px;
         color: #5c5c5c;
         margin-bottom: 28px;
     }
 `;
 
 export const CloseModal = styled.button`
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     position: absolute;
     top: 3%;
     right: 3%;
@@ -58,7 +58,7 @@ export const CloseModal = styled.button`
         content: '';
         position: absolute;
         width: 80%;
-        height: 4px;
+        height: 3px;
         background: red;
         top: 50%;
         left: 0%;
@@ -73,7 +73,7 @@ export const CloseModal = styled.button`
         content: '';
         position: absolute;
         width: 80%;
-        height: 4px;
+        height: 3px;
         background: red;
         top: 50%;
         left: 0%;
@@ -87,10 +87,28 @@ export const CloseModal = styled.button`
 
 export const Link = styled.a`
     text-decoration: none;
+    width: 100%;
+    /* margin: 0 16px; */
+    border-radius: 3px;
+    background: #0366d6;
+    color: #fff;
+    outline: none;
+    text-align: center;
+    padding: 14px;
+    opacity: .8;
+    transition: 300ms;
+    margin-top: 16px;
+
+    &:hover {
+        background: #075fc3;
+        opacity: 1;
+    }
 `;
 
 export const Download = styled.button`
-    padding: 16px 62px;
+    /* padding: 8px 0;
+    width: 100%;
+    margin: 0 16px;
     font-size: 18px;
     border: none;
     border-radius: 4px;
@@ -102,5 +120,5 @@ export const Download = styled.button`
 
     &:hover{
         transform: scale(1.03);
-    }
+    } */
 `;

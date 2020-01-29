@@ -9,7 +9,7 @@ const Routes = () => {
     return(
         <Router>
             <Switch>
-                <Route exact path='/create'>
+                <Route exact path='/'>
                     <Form />
                 </Route>
                 <Route exact path='/documents'>

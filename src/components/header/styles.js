@@ -21,18 +21,23 @@ export const Header = styled.header`
 
     & > a {
         text-decoration: none;
-        color: #fff;
+        color: #ffffff;
         text-transform: uppercase;
         font-size: 13px;
-        padding: 12px 16px;
+        padding: 12px 32px;
         border-radius: 3px;
         transition: 300ms;
-        border: 1px solid transparent;
-        background: #0366d6;
-        font-weight: 500;
+        border: 1px solid #ccc;
+        background: transparent;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        grid-column-start: ${({ cs }) => cs || 2};
 
         &:hover{
-            background: #074a96;
+            background: #0366d6;
+            border-color: #0366d6;
+            color: #fff;
         }
     }
 `;
