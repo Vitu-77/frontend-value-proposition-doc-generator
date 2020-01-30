@@ -35,25 +35,39 @@ import {
     ItemLabel,
     ItemHeader,
     ItemAction,
-    PDF
+    PDF,
+
+    NewItem,
+    PlusIcon,
+
+    ConfirmExclusionModalWrapper,
+    ExclusionModal,
+    ModalText,
+    ExlclusionButtons,
+
+    NewItemModalWraper,
+    NewItemModal,
+    NewItemModalHeader,
+    NewItemModalForm,
 } from './styles';
 
 import DeleteIcon from '../../assets/delete.svg';
 import EditIcon from '../../assets/edit.svg';
 import CloseIcon from '../../assets/close.png';
 import PDFIcon from '../../assets/pdf.png';
+import Plus from '../../assets/plus.svg';
 
 const Document = () => {
 
     const { document_id } = useParams();
-    const [doc, setDoc] = useState();
+    const [doc] = useState();
     const [docItems, setDocItems] = useState([]);
 
     // const [editMode, setEditMode] = useState(false);
     const [showItems, setShowItems] = useState(false);
     const [itemEditMode, setItemEditMode] = useState(false);
 
-    const [currentEditItem, setCurrentEditItem] = useState({});
+    const [currentEditItem, setCurrentEditItem] = useState();
 
     const [pregoeiro, setPregoeiro] = useState(doc?.pregoeiro);
     const [numPregao, setNumPregao] = useState(doc?.num_pregao);
@@ -66,15 +80,18 @@ const Document = () => {
     const [validade, setValidade] = useState(doc?.validade);
     const [dataLocal, setDataLocal] = useState(doc?.data_local);
 
-    const [editNumItem, setEditNumItem] = useState();
-    const [editDesc, setEditDesc] = useState();
-    const [editMarca, setEditMarca] = useState();
-    const [editUnidade, setEditUnidade] = useState();
-    const [editQtdTotal, setEditQtdTotal] = useState();
-    const [editValorUnitario, setEditValorUnitario] = useState();
-    const [editValorTotal, setEditValorTotal] = useState();
+    const [editNumItem, setEditNumItem] = useState('');
+    const [editDesc, setEditDesc] = useState('');
+    const [editMarca, setEditMarca] = useState('');
+    const [editUnidade, setEditUnidade] = useState('');
+    const [editQtdTotal, setEditQtdTotal] = useState('');
+    const [editValorUnitario, setEditValorUnitario] = useState('');
+    const [editValorTotal, setEditValorTotal] = useState('');
 
     const [modalPosition, setModalPosition] = useState();
+    const [showExcludeModal, setShowExcludeModal] = useState(false);
+    const [recycleBin, setRecycleBin] = useState();
+    const [showNewItemModal, setShowNewItemModal] = useState(false);
 
     useEffect(() => {
         const fetch = async () => {
@@ -95,7 +112,11 @@ const Document = () => {
         }
 
         fetch();
-    }, []);
+    }, [document_id]);
+
+    useEffect(() => {
+        setEditValorTotal(Number(editValorUnitario?.replace(/,/g, '')) * Number(editQtdTotal));
+    }, [editQtdTotal, editValorUnitario]);
 
     const handleOpenModal = (item) => {
 
@@ -120,6 +141,7 @@ const Document = () => {
         document.querySelector('body').style.overflow = 'auto';
 
         setItemEditMode(false);
+
         setEditNumItem('');
         setEditDesc('');
         setEditMarca('');
@@ -127,6 +149,66 @@ const Document = () => {
         setEditQtdTotal('');
         setEditValorUnitario('');
         setEditValorTotal('');
+    }
+
+    const handleOpenExcludeModal = () => {
+        const Y = window.scrollY;
+
+        setModalPosition(Y);
+        setShowExcludeModal(true);
+
+        document.querySelector('body').style.overflow = 'hidden';
+    }
+
+    const handleCloseExcludeModal = () => {
+        setRecycleBin('');
+        setShowExcludeModal(false);
+
+        document.querySelector('body').style.overflow = 'auto';
+    }
+
+    const handleOpenAddItemModal = () => {
+        const Y = window.scrollY;
+
+        setModalPosition(Y);
+        setShowNewItemModal(true);
+
+        document.querySelector('body').style.overflow = 'hidden';
+    }
+
+    const handleCloseAddItemModal = () => {
+        setRecycleBin('');
+        setShowNewItemModal(false);
+
+        document.querySelector('body').style.overflow = 'auto';
+
+        setEditNumItem('');
+        setEditDesc('');
+        setEditMarca('');
+        setEditUnidade('');
+        setEditQtdTotal('');
+        setEditValorUnitario('');
+        setEditValorTotal('');
+    }
+
+    const handleAddItem = async () => {
+
+        const item = {
+            documento_id: document_id,
+            numItem: editNumItem,
+            desc: editDesc,
+            marca: editMarca,
+            unidade: editUnidade,
+            qtdTotal: editQtdTotal,
+            valUnitario: editValorUnitario
+        }
+
+        const { data } = await axios.post(`${BASE_URL}/item`, item);
+
+        setDocItems([...docItems, data.addedItem]);
+
+        handleCloseAddItemModal();
+
     }
 
     const handleSubmit = async () => {
@@ -149,7 +231,7 @@ const Document = () => {
     }
 
     const handleSubmitItem = async () => {
-        const updatedItem = {
+        const update = {
             num_item: editNumItem,
             desc: editDesc,
             marca: editMarca,
@@ -159,27 +241,29 @@ const Document = () => {
             val_total: editValorTotal,
         }
 
-        await axios.put(`${BASE_URL}/item/${currentEditItem}`, updatedItem);
+        try {
+            const { data } = await axios.put(`${BASE_URL}/item/${currentEditItem}`, update);
 
-        const filteredItemsList = docItems.filter((item) => item.id !== currentEditItem);
+            const filteredItemsList = docItems.filter((item) => item.id !== currentEditItem);
 
-        setDocItems([...filteredItemsList, updatedItem]);
+            setDocItems([...filteredItemsList, data.updatedItem]);
+            handleCloseModal();
 
-        handleCloseModal();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const handleRemoveItem = async (id) => {
+    const handleRemoveItem = async () => {
 
-        await axios.delete(`${BASE_URL}/item/${id}`);
+        await axios.delete(`${BASE_URL}/item/${recycleBin}`);
 
-        const filteredItemsList = docItems.filter((item) => item.id !== id);
+        const filteredItemsList = docItems.filter((item) => item.id !== recycleBin);
 
         setDocItems(filteredItemsList);
-    }
 
-    useEffect(() => {
-        setEditValorTotal(Number(editValorUnitario?.replace(/,/g, '')) * Number(editQtdTotal));
-    }, [editQtdTotal, editValorUnitario]);
+        handleCloseExcludeModal();
+    }
 
     return (
         <React.Fragment>
@@ -192,14 +276,34 @@ const Document = () => {
                     />
                     <Wrapper>
                         <PDF href={`${BASE_URL}/pdf/${document_id}`} target='_blank'>
-                            <img src={PDFIcon} />
+                            <img alt='' src={PDFIcon} />
                         </PDF>
+                        <ConfirmExclusionModalWrapper show={showExcludeModal} y={modalPosition}>
+                            <ExclusionModal>
+                                <ModalText>Deseja deletar esse item?</ModalText>
+                                <ExlclusionButtons>
+                                    <SecondaryButton
+                                        style={{ width: '160px' }}
+                                        onClick={handleCloseExcludeModal}
+                                    >
+                                        Cancelar
+                                    </SecondaryButton>
+                                    <Button
+                                        style={{ width: '160px', marginLeft: '16px' }}
+                                        onClick={handleRemoveItem}
+                                    >
+                                        Excluir
+                                    </Button>
+                                </ExlclusionButtons>
+                            </ExclusionModal>
+                        </ConfirmExclusionModalWrapper>
+                        {/* edit item modal */}
                         <EditModalWraper show={itemEditMode} y={modalPosition}>
                             <Modal>
                                 <ModalHeader>
                                     <p>Editar Item</p>
                                     <button onClick={handleCloseModal}>
-                                        <img src={CloseIcon} />
+                                        <img alt='' src={CloseIcon} />
                                     </button>
                                 </ModalHeader>
                                 <ModalForm>
@@ -207,7 +311,7 @@ const Document = () => {
                                         <Label>Descrição</Label>
                                         <EditableBigField
                                             rows={5}
-                                            defaultValue={editDesc}
+                                            value={editDesc}
                                             editMode={true}
                                             onChange={(e) => setEditDesc(e.target.value)}
                                         />
@@ -215,7 +319,7 @@ const Document = () => {
                                     <EditableFieldContainer>
                                         <Label>Item</Label>
                                         <EditableField
-                                            defaultValue={editNumItem}
+                                            value={editNumItem}
                                             editMode={true}
                                             onChange={(e) => setEditNumItem(e.target.value)}
                                         />
@@ -223,7 +327,7 @@ const Document = () => {
                                     <EditableFieldContainer>
                                         <Label>Marca</Label>
                                         <EditableField
-                                            defaultValue={editMarca}
+                                            value={editMarca}
                                             editMode={true}
                                             onChange={(e) => setEditMarca(e.target.value)}
                                         />
@@ -231,7 +335,7 @@ const Document = () => {
                                     <EditableFieldContainer>
                                         <Label>Unidade</Label>
                                         <EditableField
-                                            defaultValue={editUnidade}
+                                            value={editUnidade}
                                             editMode={true}
                                             onChange={(e) => setEditUnidade(e.target.value)}
                                         />
@@ -239,7 +343,9 @@ const Document = () => {
                                     <EditableFieldContainer>
                                         <Label>Qtd Total</Label>
                                         <EditableField
-                                            defaultValue={editQtdTotal}
+                                            type='number'
+                                            min={0}
+                                            value={editQtdTotal}
                                             editMode={true}
                                             onChange={(e) => setEditQtdTotal(e.target.value)}
                                         />
@@ -270,10 +376,89 @@ const Document = () => {
                                 </ModalForm>
                             </Modal>
                         </EditModalWraper>
+                        {/* add item modal */}
+                        <NewItemModalWraper show={showNewItemModal} y={modalPosition}>
+                            <NewItemModal>
+                                <NewItemModalHeader>
+                                    <p>Novo Item</p>
+                                    <button onClick={handleCloseAddItemModal}>
+                                        <img alt='' src={CloseIcon} />
+                                    </button>
+                                </NewItemModalHeader>
+                                <NewItemModalForm>
+                                    <EditableFieldContainer s={2}>
+                                        <Label>Descrição</Label>
+                                        <EditableBigField
+                                            rows={5}
+                                            value={editDesc}
+                                            editMode={true}
+                                            onChange={(e) => setEditDesc(e.target.value)}
+                                        />
+                                    </EditableFieldContainer>
+                                    <EditableFieldContainer>
+                                        <Label>Item</Label>
+                                        <EditableField
+                                            value={editNumItem}
+                                            editMode={true}
+                                            onChange={(e) => setEditNumItem(e.target.value)}
+                                        />
+                                    </EditableFieldContainer>
+                                    <EditableFieldContainer>
+                                        <Label>Marca</Label>
+                                        <EditableField
+                                            value={editMarca}
+                                            editMode={true}
+                                            onChange={(e) => setEditMarca(e.target.value)}
+                                        />
+                                    </EditableFieldContainer>
+                                    <EditableFieldContainer>
+                                        <Label>Unidade</Label>
+                                        <EditableField
+                                            value={editUnidade}
+                                            editMode={true}
+                                            onChange={(e) => setEditUnidade(e.target.value)}
+                                        />
+                                    </EditableFieldContainer>
+                                    <EditableFieldContainer>
+                                        <Label>Qtd Total</Label>
+                                        <EditableField
+                                            type='number'
+                                            min={0}
+                                            value={editQtdTotal}
+                                            editMode={true}
+                                            onChange={(e) => setEditQtdTotal(e.target.value)}
+                                        />
+                                    </EditableFieldContainer>
+                                    <EditableFieldContainer>
+                                        <Label>Valor Unitário</Label>
+                                        <MoneyFormatInput
+                                            val={editValorUnitario}
+                                            handleChange={(e) => setEditValorUnitario(e)}
+                                        />
+                                    </EditableFieldContainer>
+                                    <EditableFieldContainer>
+                                        <Label>Valor Total</Label>
+                                        <MoneyFormatInput
+                                            val={editValorTotal}
+                                            handleChange={(e) => setEditValorUnitario(e)}
+                                            disabled={true}
+                                        />
+                                    </EditableFieldContainer>
+                                    <Divisor s={2} />
+                                    <Button
+                                        type='button'
+                                        cs={2}
+                                        onClick={handleAddItem}
+                                    >
+                                        Salvar Item
+                                    </Button>
+                                </NewItemModalForm>
+                            </NewItemModal>
+                        </NewItemModalWraper>
                         <EditableFieldContainer>
                             <Label>Pregoeiro</Label>
                             <EditableField
-                                defaultValue={pregoeiro}
+                                value={pregoeiro}
                                 onChange={(e) => setPregoeiro(e.target.value)}
                             />
                         </EditableFieldContainer>
@@ -353,13 +538,16 @@ const Document = () => {
                                     <StyledItem key={item.id || index}>
                                         <ItemHeader>
                                             <ItemAction onClick={() => {
-                                                handleOpenModal(docItems[index]);
+                                                handleOpenModal(item);
                                                 setCurrentEditItem(item.id);
                                             }}>
-                                                <img src={EditIcon} />
+                                                <img alt='' src={EditIcon} />
                                             </ItemAction>
-                                            <ItemAction onClick={() => handleRemoveItem(item.id)}>
-                                                <img src={DeleteIcon} />
+                                            <ItemAction onClick={() => {
+                                                handleOpenExcludeModal();
+                                                setRecycleBin(item.id);
+                                            }}>
+                                                <img alt='' src={DeleteIcon} />
                                             </ItemAction>
                                         </ItemHeader>
                                         <ItemKeyWrapper>
@@ -393,6 +581,9 @@ const Document = () => {
                                     </StyledItem>
                                 ))
                             }
+                            <NewItem onClick={handleOpenAddItemModal}>
+                                <PlusIcon src={Plus} />
+                            </NewItem>
                         </StyledGrid>
                         <Divisor style={{ display: showItems ? 'grid' : 'none' }} />
                         <SecondaryButton onClick={() => setShowItems(!showItems)}>

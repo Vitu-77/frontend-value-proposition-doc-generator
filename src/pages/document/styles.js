@@ -256,6 +256,42 @@ export const HeaderCell = styled.div`
     &:last-child{ border: none; border-radius: 0 3px 0 0 }
 `;
 
+export const ConfirmExclusionModalWrapper = styled.div`
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: ${({ y }) => y}px;
+    left: 0;
+    display: ${({ show }) => show ? 'flex' : 'none'};
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .3);
+    z-index: 1000;
+`;
+
+export const ExclusionModal = styled.div`
+    padding: 32px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100000;
+    background: #fff;
+`;
+
+export const ModalText = styled.p`
+    font-size: 22px;
+    color: #5c5c5c;
+    margin-bottom: 48px;
+    margin-top: 0;
+`;
+
+export const ExlclusionButtons = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+`;
+
 export const EditModalWraper = styled.div`
     width: 100vw;
     height: 100vh;
@@ -323,6 +359,74 @@ export const ModalForm = styled.form`
     border-radius: 0 0 3px 3px;
 `;
 
+
+export const NewItemModalWraper = styled.div`
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: ${({ y }) => y}px;
+    left: 0;
+    display: ${({ show }) => show ? 'flex' : 'none'};
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .3);
+    z-index: 1000;
+`;
+
+export const NewItemModal = styled.div`
+    width: 1000px;
+    padding: 16px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100000;
+`;
+
+export const NewItemModalHeader = styled.header`
+    width: 100%;
+    background:  #0366d6;
+    border-radius: 3px 3px 0 0;
+    padding: 0 8px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & > p {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    & > button {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        outline: none;
+
+        & > img {
+            width: 23px;
+            color: #fff;
+        }
+    }
+`;
+
+export const NewItemModalForm = styled.form`
+    padding: 8px;
+    width: 100%;
+    display: grid;
+    background: #f6f8fa;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    border-radius: 0 0 3px 3px;
+`;
+
 /* ------------------ */
 
 export const StyledGrid = styled.div`
@@ -355,6 +459,32 @@ export const StyledItem = styled.div`
     grid-auto-rows: auto;
     border: 1px solid #ccc;
     background: #fff;
+`;
+
+export const NewItem = styled.div`
+    grid-column: span 1;
+    padding: 16px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #0366d680;
+    background: #0366d612;
+    cursor: pointer;
+    transition: 300ms;
+
+    &:hover{
+        background: #0366d625;
+
+        & > img { opacity: .8 }
+    }
+`;
+
+export const PlusIcon = styled.img`
+    width: 50px;
+    height: 50px;
+    opacity: .6;
+    transition: 300ms;
 `;
 
 export const ItemLabel = styled.p`

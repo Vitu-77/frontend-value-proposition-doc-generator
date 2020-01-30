@@ -310,46 +310,13 @@ const Form = () => {
                                 Adicionar Item
                             </SecondaryButton>
                         </SubGrid>
-                        {/* <Table style={{ display: items.length ? 'block' : 'none' }}>
-                            <Row>
-                                <HeaderCell>Remover</HeaderCell>
-                                <HeaderCell>Item</HeaderCell>
-                                <HeaderCell>DESCRIÇÃO</HeaderCell>
-                                <HeaderCell>MARCA</HeaderCell>
-                                <HeaderCell>UNIDADE</HeaderCell>
-                                <HeaderCell>QTD. TOTAL</HeaderCell>
-                                <HeaderCell>VALOR UNITÁRIO</HeaderCell>
-                                <HeaderCell>VALOR TOTAL</HeaderCell>
-                            </Row>
-                            {
-                                items.map((item, index) => {
-                                    return <Row key={index}>
-                                        <Cell>
-                                            <DeleteItem
-                                                onClick={() => handleRemoveItem(index)}
-                                                src={DeleteIcon}
-                                            >
-
-                                            </DeleteItem>
-                                        </Cell>
-                                        <Cell>{item.numItem}</Cell>
-                                        <Cell>{item.desc}</Cell>
-                                        <Cell>{item.marca}</Cell>
-                                        <Cell>{item.unidade}</Cell>
-                                        <Cell>{item.qtdTotal}</Cell>
-                                        <Cell>{toMoneyFormat(item.valorUnitarioConvertido)}</Cell>
-                                        <Cell>{toMoneyFormat(item.valorTot)}</Cell>
-                                    </Row>
-                                })
-                            }
-                        </Table> */}
                         <StyledGrid>
                             {
                                 items.map((item, index) => (
                                     <StyledItem key={index}>
                                         <ItemHeader>
                                             <ItemAction onClick={() => handleRemoveItem(index)}>
-                                                <img src={DeleteIcon} />
+                                                <img alt='' src={DeleteIcon} />
                                             </ItemAction>
                                         </ItemHeader>
                                         <ItemKeyWrapper>

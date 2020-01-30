@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Wrapper, ModalContainer, Link, Download, CloseModal } from './styles';
+import { Wrapper, ModalContainer, Link, CloseModal } from './styles';
 
 const Modal = ({ handleClick, show, PDFLink }) => {
     return (
