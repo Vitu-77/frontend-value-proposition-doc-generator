@@ -261,7 +261,7 @@ const Form = () => {
                             <Input value={dataLocal} onChange={(e) => setDataLocal(e.target.value)} />
                         </InputWrapper>
                     </Section>
-                    <SectionTitle>Items</SectionTitle>
+                    <SectionTitle>Itens</SectionTitle>
                     <Section>
                         <InputWrapper c={4}>
                             <Label>Descrição</Label>
