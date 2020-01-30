@@ -4,6 +4,7 @@ import MainHeader from '../../components/header';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
 import { toMoneyFormat } from '../../util/stringsHandler';
+import MoneyFormatInput from '../../components/currencyInput';
 
 import {
     Wrapper,
@@ -176,6 +177,10 @@ const Document = () => {
         setDocItems(filteredItemsList);
     }
 
+    useEffect(() => {
+        setEditValorTotal(Number(editValorUnitario?.replace(/,/g, '')) * Number(editQtdTotal));
+    }, [editQtdTotal, editValorUnitario]);
+
     return (
         <React.Fragment>
             {pregoeiro ?
@@ -241,18 +246,17 @@ const Document = () => {
                                     </EditableFieldContainer>
                                     <EditableFieldContainer>
                                         <Label>Valor Unitário</Label>
-                                        <EditableField
-                                            defaultValue={editValorUnitario}
-                                            editMode={true}
-                                            onChange={(e) => setEditValorUnitario(e.target.value)}
+                                        <MoneyFormatInput
+                                            val={editValorUnitario}
+                                            handleChange={(e) => setEditValorUnitario(e)}
                                         />
                                     </EditableFieldContainer>
                                     <EditableFieldContainer>
                                         <Label>Valor Total</Label>
-                                        <EditableField
-                                            defaultValue={editValorTotal}
-                                            editMode={true}
-                                            disabled
+                                        <MoneyFormatInput
+                                            val={editValorTotal}
+                                            handleChange={(e) => setEditValorUnitario(e)}
+                                            disabled={true}
                                         />
                                     </EditableFieldContainer>
                                     <Divisor s={2} />
@@ -343,54 +347,6 @@ const Document = () => {
                             </EditableFieldContainer>
                         </SubGrid>
                         <Divisor />
-                        {/* <Table>
-                            <Row>
-                                <HeaderCell>Remover</HeaderCell>
-                                <HeaderCell>Editar</HeaderCell>
-                                <HeaderCell>Item</HeaderCell>
-                                <HeaderCell>DESCRIÇÃO</HeaderCell>
-                                <HeaderCell>MARCA</HeaderCell>
-                                <HeaderCell>UNIDADE</HeaderCell>
-                                <HeaderCell>QTD. TOTAL</HeaderCell>
-                                <HeaderCell>VAL. UNITÁRIO</HeaderCell>
-                                <HeaderCell>VAL. TOTAL</HeaderCell>
-                            </Row>
-                            {
-                                docItems.map((item, index) => {
-                                    return <Row key={index}>
-                                        <Cell>
-                                            <DeleteItem
-                                                onClick={() => console.log('currentEditItem')}
-                                                src={DeleteIcon}
-                                            >
-
-                                            </DeleteItem>
-                                        </Cell>
-                                        <Cell>
-                                            <DeleteItem
-                                                onClick={() => handleOpenModal(docItems[index])}
-                                                src={EditIcon}
-                                            >
-
-                                            </DeleteItem>
-                                        </Cell>
-                                        <Cell>{item.num_item}</Cell>
-                                        <Cell>{item.desc}</Cell>
-                                        <Cell>{item.marca}</Cell>
-                                        <Cell>{item.unidade}</Cell>
-                                        <Cell>{item.qtd_total}</Cell>
-                                        <Cell>{Number(item.val_unitario)?.toFixed(2)}</Cell>
-                                        <Cell>{Number(item.val_total)?.toFixed(2)}</Cell>
-                                    </Row>
-                                })
-                            }
-                        </Table> */}
-                        {/* <Button
-                            onClick={() => console.log(docItems)}
-                            disabled={editMode}
-                            cs={2}>
-                            Editar Itens
-                        </Button> */}
                         <StyledGrid style={{ display: showItems ? 'grid' : 'none' }}>
                             {
                                 docItems.map((item, index) => (
