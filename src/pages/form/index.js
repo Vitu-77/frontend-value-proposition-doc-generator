@@ -152,7 +152,7 @@ const Form = () => {
             console.log(data);
 
             const response = await axios.post(BASE_URL, data);
-            setPDFLink(`http://localhost:4000/pdf/${response.data.id}`);
+            setPDFLink(`${BASE_URL}/pdf/${response.data.id}`);
             setShowModal(true);
         }
         else {

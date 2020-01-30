@@ -33,12 +33,14 @@ import {
     ItemKeyWrapper,
     ItemLabel,
     ItemHeader,
-    ItemAction
+    ItemAction,
+    PDF
 } from './styles';
 
 import DeleteIcon from '../../assets/delete.svg';
 import EditIcon from '../../assets/edit.svg';
 import CloseIcon from '../../assets/close.png';
+import PDFIcon from '../../assets/pdf.png';
 
 const Document = () => {
 
@@ -184,6 +186,9 @@ const Document = () => {
                         target='/documents'
                     />
                     <Wrapper>
+                        <PDF href={`${BASE_URL}/pdf/${document_id}`} target='_blank'>
+                            <img src={PDFIcon} />
+                        </PDF>
                         <EditModalWraper show={itemEditMode} y={modalPosition}>
                             <Modal>
                                 <ModalHeader>
