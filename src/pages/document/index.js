@@ -75,7 +75,7 @@ const Document = () => {
 
     useEffect(() => {
         const fetch = async () => {
-            const { data } = await axios.get(`http://localhost:4000/${document_id}`);
+            const { data } = await axios.get(`${BASE_URL}/${document_id}`);
 
             setDocItems(data?.result?.items);
 
