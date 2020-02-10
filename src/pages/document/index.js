@@ -93,6 +93,8 @@ const Document = () => {
     const [recycleBin, setRecycleBin] = useState();
     const [showNewItemModal, setShowNewItemModal] = useState(false);
 
+    const [loadingData, setLoadingData] = useState(true);
+
     useEffect(() => {
         const fetch = async () => {
             const { data } = await axios.get(`${BASE_URL}/${document_id}`);
@@ -109,10 +111,16 @@ const Document = () => {
             setGarantia(data?.result?.garantia);
             setValidade(data?.result?.validade);
             setDataLocal(data?.result?.data_local);
+
+            setLoadingData(false);
         }
 
         fetch();
     }, [document_id]);
+
+    useEffect(() => {
+        console.log('LD - ',loadingData);
+    }, [loadingData])
 
     useEffect(() => {
         setEditValorTotal(Number(editValorUnitario?.replace(/,/g, '')) * Number(editQtdTotal));
@@ -227,7 +235,7 @@ const Document = () => {
 
         await axios.put(`${BASE_URL}/${document_id}`, updatedDoc);
 
-        window.location.reload();
+        window.location.assign('/documents');
     }
 
     const handleSubmitItem = async () => {
@@ -267,7 +275,7 @@ const Document = () => {
 
     return (
         <React.Fragment>
-            {pregoeiro ?
+            {!loadingData ?
                 <React.Fragment>
                     <MainHeader
                         title={`Documento: ${document_id.replace('documento-', '')}`}
@@ -303,7 +311,7 @@ const Document = () => {
                                 <ModalHeader>
                                     <p>Editar Item</p>
                                     <button onClick={handleCloseModal}>
-                                        <img alt='' src={CloseIcon} />
+                                        <img alt='fechar' src={CloseIcon} />
                                     </button>
                                 </ModalHeader>
                                 <ModalForm>
