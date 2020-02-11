@@ -119,7 +119,7 @@ const Document = () => {
     }, [document_id]);
 
     useEffect(() => {
-        console.log('LD - ',loadingData);
+        console.log('LD - ', loadingData);
     }, [loadingData])
 
     useEffect(() => {
@@ -251,7 +251,6 @@ const Document = () => {
 
         try {
             const { data } = await axios.put(`${BASE_URL}/item/${currentEditItem}`, update);
-
             const filteredItemsList = docItems.filter((item) => item.id !== currentEditItem);
 
             setDocItems([...filteredItemsList, data.updatedItem]);
